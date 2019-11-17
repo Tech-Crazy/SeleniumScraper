@@ -47,7 +47,7 @@ try:
     print("Here are the aisle_links", aisle_links)
     print("Writing header row")
     writer = csv.writer(csvfile)
-    writer.writerow(["Product_ID", "Product_Name", "Product_Category", "Price", "Image_URL", "Details", "Ingredients", "Nutrition_Dict"])
+    writer.writerow(["Product_ID", "Product_Name", "Product_Category", "Price", "Image_URL", "Details", "Ingredients", "Nutrition_Dict", "Zip_Code", "Store", "Category"])
     for link in aisle_links:
         print("In aisle page")
         driver.get(link)
@@ -61,30 +61,33 @@ try:
         for itemlink in itempagelinks:
             nutrition_dict = {}
             driver.get(itemlink)
-            time.sleep(12)
-            itemsource = BeautifulSoup(driver.page_source, "html.parser")
-            #Data collection
-            title = itemsource.find("h2").string
-            price = driver.find_element(By.XPATH, "//span[contains(text(), 'price')]//following-sibling::span").text
-            image_url = itemsource.find("div", {"class": "ic-image-zoomer"}).img['src']
-            product_id = driver.current_url.split("_")[-1]
-            h3_tags = itemsource.find_all("h3")
-            stronglinks = itemsource.find_all("strong")
-            details = "NA"
-            ingredients = "NA"
-            #Find details and ingredients
-            for tag in h3_tags:
-                if tag.string == "Details":
-                    details = tag.next_sibling.string
-                elif tag.string == "Ingredients":
-                    ingredients = tag.next_sibling.string
-            #Find nutrition dict
-            if stronglinks:
-                for strong in stronglinks:
-                    nutrition_dict[strong.text] = strong.next_sibling
-            else:
-                stronglinks = "NA"
-            writer.writerow([product_id, title, product_category, price, image_url, details, ingredients, nutrition_dict])
+            time.sleep(13)
+            try:
+                itemsource = BeautifulSoup(driver.page_source, "html.parser")
+                #Data collection
+                title = itemsource.find("h2").string
+                price = driver.find_element(By.XPATH, "//span[contains(text(), 'price')]//following-sibling::span").text
+                image_url = itemsource.find("div", {"class": "ic-image-zoomer"}).img['src']
+                product_id = driver.current_url.split("_")[-1]
+                h3_tags = itemsource.find_all("h3")
+                stronglinks = itemsource.find_all("strong")
+                details = "NA"
+                ingredients = "NA"
+                #Find details and ingredients
+                for tag in h3_tags:
+                    if tag.string == "Details":
+                        details = tag.next_sibling.string
+                    elif tag.string == "Ingredients":
+                        ingredients = tag.next_sibling.string
+                #Find nutrition dict
+                if stronglinks:
+                    for strong in stronglinks:
+                        nutrition_dict[strong.text] = strong.next_sibling
+                else:
+                    nutrition_dict = "NA"
+                writer.writerow([product_id, title, product_category, price, image_url, details, ingredients, nutrition_dict, ZIPCODE, STORE, CATEGORY])
+            except Exception as e:
+                continue
 
 
 except Exception as e:
