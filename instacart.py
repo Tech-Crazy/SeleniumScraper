@@ -58,10 +58,10 @@ try:
         itempagelinks = [BASE_URL+link.a['href'] for link in items]
         print("These are formatted item page links", itempagelinks)
         product_category = driver.title.split("-")[-1]
-        nutrition_dict = {}
         for itemlink in itempagelinks:
+            nutrition_dict = {}
             driver.get(itemlink)
-            time.sleep(15)
+            time.sleep(12)
             itemsource = BeautifulSoup(driver.page_source, "html.parser")
             #Data collection
             title = itemsource.find("h2").string
