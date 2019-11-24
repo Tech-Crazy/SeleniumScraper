@@ -21,7 +21,9 @@ class ScrapedataSpider(scrapy.Spider):
 
     def parse(self, response):
         try:
-            driver = webdriver.Firefox()
+            options = Options()
+            options.headless = True
+            driver = webdriver.Firefox(options = options)
             time.sleep(13)
             driver.get(BASE_URL)
 
